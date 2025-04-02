@@ -1,13 +1,17 @@
 package conta;
 
+
 import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+
 
 import conta.controller.ContaController;
 import conta.model.ContaCorrente;
 import conta.model.ContaPoupanca;
 import conta.util.Cores;
+
 
 public class Menu {
 
@@ -120,16 +124,65 @@ public class Menu {
 
 			case 3:
 				System.out.println(Cores.TEXT_WHITE_BOLD + "Consultar dados da conta - Por número \n\n");
+				System.out.println("Digite o número da Conta: ");
+				numero = lerScanner.nextInt();
+				
+				contas.procurarPorNumero(numero);
+				
 				keyPress();
 				break;
 
 			case 4:
-				System.out.println(Cores.TEXT_WHITE_BOLD + "Atualizar dados da Conta \n\n");
-				keyPress();
+				System.out.println(Cores.TEXT_WHITE + "Atualizar dados da Conta\n\n");
+				
+				System.out.println("Digite o número da conta: ");
+				numero = lerScanner.nextInt();
+				
+				var buscaConta = contas.buscarNaCollection(numero);
+
+				if (buscaConta != null) {
+					
+					System.out.println("Digite o Numero da Agência: ");
+					agencia = lerScanner.nextInt();
+					System.out.println("Digite o Nome do Titular: ");
+					lerScanner.skip("\\R?");
+					titular = lerScanner.nextLine();
+						
+					System.out.println("Digite o Saldo da Conta (R$): ");
+					saldo = lerScanner.nextFloat();
+					
+					tipo = buscaConta.getTipo();
+					
+					switch(tipo) {
+						case 1 -> {
+							System.out.println("Digite o Limite de Crédito (R$): ");
+							limite = lerScanner.nextFloat();
+							contas.atualizar(new ContaCorrente(numero, agencia, tipo, titular, saldo, limite));
+						}
+						case 2 -> {
+							System.out.println("Digite o dia do Aniversario da Conta: ");
+							aniversario = lerScanner.nextInt();
+							contas.atualizar(new ContaPoupanca(numero, agencia, tipo, titular, saldo, aniversario));
+						}
+						default ->{
+							System.out.println("Tipo de conta inválido!");
+						}
+					}
+					
+				}else
+					System.out.println("\nConta não encontrada!");
+
+                keyPress();
 				break;
 
 			case 5:
 				System.out.println(Cores.TEXT_WHITE_BOLD + "Apagar a Conta \n\n");
+				
+				System.out.println("Digite o número da Conta");
+				numero = lerScanner.nextInt();
+				
+				contas.deletar(numero);
+				
 				keyPress();
 				break;
 
